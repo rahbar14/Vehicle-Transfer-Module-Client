@@ -1,31 +1,35 @@
 "use client"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
     UserOutlined,
     CarOutlined,
-    LogoutOutlined
+    LogoutOutlined,
+    HomeOutlined
 } from '@ant-design/icons';
 import { Button, Layout, Menu, message, theme } from 'antd';
 import AuthUser from '@/components/AuthUser';
 import axios, { AxiosError } from 'axios';
-import { useRouter } from 'next/navigation';
-const { Header, Sider } = Layout;
-const layout = ({ children }) => {
-    const router = useRouter()
+import { usePathname, useRouter } from 'next/navigation';
+
+const { Header, Sider, Content } = Layout;
+
+const LayoutComponent = ({ children }) => {
+    const router = useRouter();
+    const path = usePathname();
+
+    const menuPathMap = {
+        "/create-driver": { defaultOpenKeys: ['1'], defaultSelectedKeys: ['2'] },
+        "/dashboard": { defaultSelectedKeys: ['0'] }
+    };
+
     const [messageApi, contextHolder] = message.useMessage();
     const successMessage = (message) => {
-        messageApi.open({
-            type: 'success',
-            content: message,
-        });
+        messageApi.open({ type: 'success', content: message });
     };
     const errorMessage = (message) => {
-        messageApi.open({
-            type: 'error',
-            content: message,
-        });
+        messageApi.open({ type: 'error', content: message });
     };
 
     const logout = async () => {
@@ -33,35 +37,67 @@ const layout = ({ children }) => {
             const res = await axios.get("/user/logout", { withCredentials: true });
             if (res.data.status) {
                 successMessage("Logout successful");
-                router.push("/login")
+                router.push("/login");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                errorMessage(error.response.data.message)
-            }
-            else {
-                errorMessage("something went wrong")
+                errorMessage(error.response.data.message);
+            } else {
+                errorMessage("Something went wrong");
             }
         }
-    }
-    
+    };
+
     const [collapsed, setCollapsed] = useState(false);
     const [user, setUser] = useState(null);
     const {
-        token: { colorBgContainer },
+        token: { colorBgContainer, borderRadiusLG },
     } = theme.useToken();
+
+    // Automatically collapse sidebar on smaller screens
+    const handleResize = () => {
+        if (window.innerWidth <= 768) {
+            setCollapsed(true);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial check on mount
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
     return (
         <>
-            { contextHolder }
+            {contextHolder}
             <AuthUser setUser={setUser}>
                 <Layout className='min-h-screen'>
-                    <Sider trigger={null} collapsible collapsed={collapsed}>
+                    <Sider
+                        trigger={null}
+                        collapsible
+                        collapsed={collapsed}
+                        breakpoint="md"
+                        onBreakpoint={(broken) => {
+                            if (broken) setCollapsed(true);
+                        }}
+                        style={{ position: 'fixed', height: '100vh', zIndex: 10 }}
+                    >
                         <div className="demo-logo-vertical" />
                         <Menu
                             theme="dark"
                             mode="inline"
-                            defaultSelectedKeys={['1']}
+                            defaultSelectedKeys={menuPathMap?.[path]?.defaultSelectedKeys ?? []}
+                            defaultOpenKeys={menuPathMap?.[path]?.defaultOpenKeys ?? []}
                             items={[
+                                {
+                                    key: '0',
+                                    icon: <HomeOutlined />,
+                                    label: 'Dashboard',
+                                    onClick: () => router.push("/dashboard")
+                                },
                                 {
                                     key: '1',
                                     icon: <UserOutlined />,
@@ -69,7 +105,8 @@ const layout = ({ children }) => {
                                     children: [
                                         {
                                             key: "2",
-                                            label: "Create Driver"
+                                            label: "Create Driver",
+                                            onClick: () => router.push("/create-driver")
                                         },
                                         {
                                             key: "3",
@@ -79,7 +116,7 @@ const layout = ({ children }) => {
                                 },
                                 {
                                     key: '4',
-                                    icon: <CarOutlined/>,
+                                    icon: <CarOutlined />,
                                     label: 'Vehicles',
                                     children: [
                                         {
@@ -101,32 +138,49 @@ const layout = ({ children }) => {
                             ]}
                         />
                     </Sider>
-                    <Layout>
+                    <Layout style={{ marginLeft: collapsed ? 80 : 200, transition: 'margin-left 0.3s ease-in-out' }}>
                         <Header
                             style={{
                                 padding: 0,
                                 background: colorBgContainer,
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                                position: 'fixed',
+                                width: `calc(100% - ${collapsed ? 80 : 200}px)`,
+                                zIndex: 9,
+                                left: collapsed ? 80 : 200,
+                                transition: 'left 0.3s ease-in-out',
                             }}
                         >
-                            <div className='text-right flex'>
                             <Button
                                 type="text"
                                 icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                                 onClick={() => setCollapsed(!collapsed)}
                                 style={{
                                     fontSize: '16px',
-                                    width: 64,
-                                    height: 64,
+                                    marginLeft: '16px',
                                 }}
                             />
-                                <span>Hello, {user?.username}</span>
-                            </div>
+                            <span style={{ marginRight: '16px' }}>Hello, {user?.username}</span>
                         </Header>
-                        {children}
+
+                        <Content
+                            style={{
+                                margin: '80px 16px 24px',
+                                padding: 24,
+                                minHeight: 280,
+                                background: colorBgContainer,
+                                borderRadius: borderRadiusLG,
+                            }}
+                        >
+                            {children}
+                        </Content>
                     </Layout>
                 </Layout>
             </AuthUser>
         </>
     );
 };
-export default layout;
+
+export default LayoutComponent;
