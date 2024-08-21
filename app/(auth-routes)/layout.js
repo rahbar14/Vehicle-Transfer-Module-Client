@@ -20,8 +20,11 @@ const LayoutComponent = ({ children }) => {
     const path = usePathname();
 
     const menuPathMap = {
+        "/dashboard": { defaultSelectedKeys: ['0'] },
         "/create-driver": { defaultOpenKeys: ['1'], defaultSelectedKeys: ['2'] },
-        "/dashboard": { defaultSelectedKeys: ['0'] }
+        "/drivers": { defaultOpenKeys: ['1'], defaultSelectedKeys: ['3'] },
+        "/create-vehicle": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['5'] },
+        "/vehicles": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['6'] },
     };
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -110,7 +113,8 @@ const LayoutComponent = ({ children }) => {
                                         },
                                         {
                                             key: "3",
-                                            label: "Drivers List"
+                                            label: "Drivers List",
+                                            onClick: () => router.push("/drivers")
                                         }
                                     ]
                                 },
@@ -121,11 +125,13 @@ const LayoutComponent = ({ children }) => {
                                     children: [
                                         {
                                             key: "5",
-                                            label: "Create Vehicle"
+                                            label: "Create Vehicle",
+                                            onClick: () => router.push("/create-vehicle")
                                         },
                                         {
                                             key: "6",
-                                            label: "Vehicles List"
+                                            label: "Vehicles List",
+                                            onClick: () => router.push("/vehicles")
                                         }
                                     ]
                                 },

@@ -1,18 +1,14 @@
 "use client"
 import React from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, Flex, message, Layout, theme } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 
-const { Content } = Layout
 
 const Dashboard = () => {
     const router = useRouter();
 
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
     const [messageApi, contextHolder] = message.useMessage();
     const successMessage = (message) => {
         messageApi.open({
@@ -46,15 +42,6 @@ const Dashboard = () => {
         <>
 
             {contextHolder}
-            <Content
-                style={{
-                    margin: '24px 16px',
-                    padding: 24,
-                    minHeight: 280,
-                    background: colorBgContainer,
-                    borderRadius: borderRadiusLG,
-                }}
-            >
             <Form
                 name="login"
                 initialValues={{
@@ -96,7 +83,6 @@ const Dashboard = () => {
                     or <a href="/register">Register now!</a>
                 </Form.Item>
             </Form>
-            </Content>
         </>
     );
 };
