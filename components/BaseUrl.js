@@ -1,8 +1,9 @@
 "use client"
 import axios from "axios";
+import CONFIG from "../config/config"
 
 const BaseUrl = () => {
-    axios.defaults.baseURL = "http://localhost:8000/api";
+    axios.defaults.baseURL = CONFIG.API_BASE_URL + "/api";
     return <></>
 };
 

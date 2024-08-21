@@ -207,7 +207,7 @@ const App = () => {
                         },
                     ]}
                 >
-                    <Select placeholder="select your gender">
+                    <Select placeholder="Select your gender">
                         <Option value="male">Male</Option>
                         <Option value="female">Female</Option>
                         <Option value="other">Other</Option>

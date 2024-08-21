@@ -30,7 +30,6 @@ const Page = () => {
     ];
 
     useEffect(() => {
-        console.log("data")
         const fetchData = async () => {
             try {
                 const res = await axios.get("/driver/drivers-list", { withCredentials: true });
