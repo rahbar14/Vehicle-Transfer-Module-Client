@@ -28,26 +28,18 @@ const LayoutComponent = ({ children }) => {
         "/transfer": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['7'] },
     };
 
-    const [messageApi, contextHolder] = message.useMessage();
-    const successMessage = (message) => {
-        messageApi.open({ type: 'success', content: message });
-    };
-    const errorMessage = (message) => {
-        messageApi.open({ type: 'error', content: message });
-    };
-
     const logout = async () => {
         try {
             const res = await axios.get("/user/logout", { withCredentials: true });
             if (res.data.status) {
-                successMessage("Logout successful");
+                message.success("Logout successful");
                 router.push("/login");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                errorMessage(error.response.data.message);
+                message.error(error.response.data.message);
             } else {
-                errorMessage("Something went wrong");
+                message.error("Something went wrong");
             }
         }
     };
@@ -76,7 +68,6 @@ const LayoutComponent = ({ children }) => {
 
     return (
         <>
-            {contextHolder}
             <AuthUser setUser={setUser}>
                 <Layout className='min-h-screen'>
                     <Sider

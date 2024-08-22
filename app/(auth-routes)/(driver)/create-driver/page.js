@@ -47,7 +47,6 @@ const tailFormItemLayout = {
 const App = () => {
     const [form] = Form.useForm();
     const router = useRouter();
-    const [messageApi, contextHolder] = message.useMessage();
     const [loading, setLoading] = useState(false);
     const [file, setFile] = useState(null);
 
@@ -60,14 +59,6 @@ const App = () => {
             <div style={{ marginTop: 8 }}>Upload</div>
         </button>
     );
-
-    const successMessage = (message) => {
-        messageApi.open({ type: 'success', content: message });
-    };
-
-    const errorMessage = (message) => {
-        messageApi.open({ type: 'error', content: message });
-    };
 
     const handleChange = (info) => {
         if (info.file.status === 'uploading') {
@@ -96,21 +87,20 @@ const App = () => {
             });
 
             if (res.data.status) {
-                successMessage("Driver created successfully");
+                message.success("Driver created successfully");
                 router.push("/drivers");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                errorMessage(error.response?.data?.message || "Failed to create driver");
+                message.error(error.response?.data?.message || "Failed to create driver");
             } else {
-                errorMessage("Something went wrong");
+                message.error("Something went wrong");
             }
         }
     };
 
     return (
         <>
-            {contextHolder}
             <h1 className='text-center mb-5 font-bold text-lg'>Create Driver</h1>
             <Form
                 {...formItemLayout}

@@ -1,9 +1,7 @@
 "use client"
 import React, { useEffect, useState } from 'react';
-import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, Col, Form, Input, message, Row } from 'antd';
-import { useRouter } from 'next/navigation';
-import axios, { AxiosError } from 'axios';
+import { Card, Col, Row } from 'antd';
+import axios from 'axios';
 
 
 const Dashboard = () => {

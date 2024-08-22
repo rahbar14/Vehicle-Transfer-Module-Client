@@ -43,34 +43,21 @@ const tailFormItemLayout = {
 const App = () => {
     const [form] = Form.useForm();
     const router = useRouter();
-    const [messageApi, contextHolder] = message.useMessage();
-    const successMessage = (message) => {
-        messageApi.open({
-            type: 'success',
-            content: message,
-        });
-    };
-    const errorMessage = (message) => {
-        messageApi.open({
-            type: 'error',
-            content: message,
-        });
-    };
     const onFinish = async (values) => {
         try {
             const { email, gender, username, password, phone } = values;
             const res = await axios.post("/user/register", { email, gender, username, password, phone }, {withCredentials: true});
             if (res.data.status)
             {
-                successMessage("Registration successful");
+                message.success("Registration successful");
                 router.push("/dashboard")
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                errorMessage(error.response.data.message)
+                message.error(error.response.data.message)
             }
             else {
-                errorMessage("something went wrong")
+                message.error("something went wrong")
             }
         }
     };
@@ -87,7 +74,6 @@ const App = () => {
     );
     return (
         <>
-        {contextHolder}
         <h1 className='text-center mb-3'>Register</h1>
             <Form
                 {...formItemLayout}

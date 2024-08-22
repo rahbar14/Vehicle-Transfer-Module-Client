@@ -41,49 +41,26 @@ const tailFormItemLayout = {
 const CreateVehicle = () => {
     const [form] = Form.useForm();
     const router = useRouter();
-    const [messageApi, contextHolder] = message.useMessage();
-    const [loading, setLoading] = useState(false);
     const [pucFile, setPucFile] = useState(null);
     const [insuranceFile, setInsuranceFile] = useState(null);
     const [pucFileName, setPucFileName] = useState('');
     const [insuranceFileName, setInsuranceFileName] = useState('');
 
-
-    const successMessage = (message) => {
-        messageApi.open({ type: 'success', content: message });
-    };
-
-    const errorMessage = (message) => {
-        messageApi.open({ type: 'error', content: message });
-    };  
-
     const handlePucChange = (info) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
+        if (info.file.status === 'uploading') return;
         if (info.file.status === 'done') {
-            setLoading(false);
             setPucFile(info.file.originFileObj);
             setPucFileName(info.file.name);
             form.setFieldsValue({ puc_certificate: info.file.originFileObj });
-        } else if (info.file.status === 'error') {
-            setLoading(false);
         }
     };
 
     const handleInsuranceChange = (info) => {
-        if (info.file.status === 'uploading') {
-            setLoading(true);
-            return;
-        }
+        if (info.file.status === 'uploading') return;
         if (info.file.status === 'done') {
-            setLoading(false);
             setInsuranceFile(info.file.originFileObj);
             setInsuranceFileName(info.file.name);
             form.setFieldsValue({ insurance_cert: info.file.originFileObj });
-        } else if (info.file.status === 'error') {
-            setLoading(false);
         }
     };
 
@@ -115,21 +92,20 @@ const CreateVehicle = () => {
             });
 
             if (res.data.status) {
-                successMessage("Vehicle created successfully");
+                message.success("Vehicle created successfully");
                 router.push("/vehicles");
             }
         } catch (error) {
             if (error instanceof AxiosError) {
-                errorMessage(error.response?.data?.message || "Failed to create vehicle");
+                message.error(error.response?.data?.message || "Failed to create vehicle");
             } else {
-                errorMessage("Something went wrong");
+                message.error("Something went wrong");
             }
         }
     };
 
     return (
         <>
-            {contextHolder}
             <h1 className='text-center mb-5 font-bold text-lg'>Create Vehicle</h1>
             <Form
                 {...formItemLayout}
