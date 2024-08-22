@@ -25,6 +25,7 @@ const LayoutComponent = ({ children }) => {
         "/drivers": { defaultOpenKeys: ['1'], defaultSelectedKeys: ['3'] },
         "/create-vehicle": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['5'] },
         "/vehicles": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['6'] },
+        "/transfer": { defaultOpenKeys: ['4'], defaultSelectedKeys: ['7'] },
     };
 
     const [messageApi, contextHolder] = message.useMessage();
@@ -132,11 +133,16 @@ const LayoutComponent = ({ children }) => {
                                             key: "6",
                                             label: "Vehicles List",
                                             onClick: () => router.push("/vehicles")
+                                        },
+                                        {
+                                            key: "7",
+                                            label: "Vehicle Transfer",
+                                            onClick: () => router.push("/transfer")
                                         }
                                     ]
                                 },
                                 {
-                                    key: "7",
+                                    key: "8",
                                     icon: <LogoutOutlined />,
                                     label: "Logout",
                                     onClick: logout,

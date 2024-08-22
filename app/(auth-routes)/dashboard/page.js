@@ -1,88 +1,46 @@
 "use client"
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message } from 'antd';
+import { Button, Card, Col, Form, Input, message, Row } from 'antd';
 import { useRouter } from 'next/navigation';
 import axios, { AxiosError } from 'axios';
 
 
 const Dashboard = () => {
-    const router = useRouter();
+    const [data, setData] = useState(null)
 
-    const [messageApi, contextHolder] = message.useMessage();
-    const successMessage = (message) => {
-        messageApi.open({
-            type: 'success',
-            content: message,
-        });
-    };
-    const errorMessage = (message) => {
-        messageApi.open({
-            type: 'error',
-            content: message,
-        });
-    };
-    const onFinish = async (values) => {
-        try {
-            const res = await axios.post("/user/login", values, { withCredentials: true });
-            if (res.data.status) {
-                successMessage("Login successful");
-                router.push("/dashboard")
-            }
-        } catch (error) {
-            if (error instanceof AxiosError) {
-                errorMessage(error.response.data.message)
-            }
-            else {
-                errorMessage("something went wrong")
-            }
+    useEffect(() => {
+        const getData = async () => {
+            try {
+                const res = await axios.get("/user/dashboard", { withCredentials: true });
+                if (res.data.status) setData(res.data.data)
+            } catch (error) { console.log(error) }
         }
-    };
+        getData()
+    }, [])
+
     return (
         <>
-
-            {contextHolder}
-            <Form
-                name="login"
-                initialValues={{
-                    remember: true,
-                }}
-                style={{
-                    maxWidth: 360,
-                }}
-                onFinish={onFinish}
-                className='ml-auto mr-auto text-center'
-            >
-                <Form.Item
-                    name="username"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input your Username!',
-                        },
-                    ]}
+            <Row gutter={20}>
+                <Col 
+                    xs={{flex: '100%'}}
+                    sm={{flex: '50%'}}
+                    md={{flex: '50%'}}
+                    lg={{flex: '50%'}}
+                    xl={{flex: '50%'}}
                 >
-                    <Input prefix={<UserOutlined />} placeholder="Username" />
-                </Form.Item>
-                <Form.Item
-                    name="password"
-                    rules={[
-                        {
-                            required: true,
-                            message: 'Please input your Password!',
-                        },
-                    ]}
+                    <Card title="Total Vehicles" className='text-lg'>{data?.vehicles_count ?? 0}</Card>
+                </Col>
+                <Col
+                    xs={{ flex: '100%' }}
+                    sm={{ flex: '50%' }}
+                    md={{ flex: '50%' }}
+                    lg={{ flex: '50%' }}
+                    xl={{ flex: '50%' }}
                 >
-                    <Input prefix={<LockOutlined />} type="password" placeholder="Password" />
-                </Form.Item>
-
-                <Form.Item>
-                    <Button block type="primary" htmlType="submit">
-                        Log in
-                    </Button>
-                    or <a href="/register">Register now!</a>
-                </Form.Item>
-            </Form>
+                    <Card title="Total Drivers" className='text-lg'>{data?.drivers_count ?? 0}</Card>
+                </Col>
+            </Row>
         </>
     );
 };

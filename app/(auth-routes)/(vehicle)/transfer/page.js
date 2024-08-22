@@ -2,7 +2,7 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Select, message, Spin } from 'antd';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useRouter } from 'next/navigation';
 
 const { Option } = Select;
@@ -11,7 +11,6 @@ const TransferForm = () => {
     const [form] = Form.useForm();
     const [vehicles, setVehicles] = useState([]);
     const [drivers, setDrivers] = useState([]);
-    const [messageApi, contextHolder] = message.useMessage();
     const router = useRouter();
 
     const fetchVehicles = async (search) => {
@@ -37,11 +36,16 @@ const TransferForm = () => {
 
     const onFinish = async (values) => {
         try {
-            await axios.post('/api/transfer', values);
+            await axios.post('/vehicle/transfer-vehicle', values, {withCredentials: true});
             message.success('Transfer successful');
             router.push('/dashboard');
         } catch (error) {
-            message.error('Transfer failed');
+            if (error instanceof AxiosError) {
+                message.error(error.response.data.message)
+            }
+            else {
+                message.error("something went wrong")
+            }
         }
     };
 
@@ -60,7 +64,6 @@ const TransferForm = () => {
 
     return (
         <>
-            {contextHolder}
             <h1 className='text-center mb-3'>Transfer Vehicle</h1>
             <Form
                 form={form}
@@ -70,7 +73,7 @@ const TransferForm = () => {
                 scrollToFirstError
             >
                 <Form.Item
-                    name="vehicle"
+                    name="vehicle_number"
                     label="Select Vehicle"
                     rules={[{ required: true, message: 'Please select a vehicle!' }]}
                 >
@@ -89,7 +92,7 @@ const TransferForm = () => {
                 </Form.Item>
 
                 <Form.Item
-                    name="driver"
+                    name="driver_id"
                     label="Select Driver"
                     rules={[{ required: true, message: 'Please select a driver!' }]}
                 >

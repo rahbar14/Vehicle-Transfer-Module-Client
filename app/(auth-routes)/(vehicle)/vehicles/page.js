@@ -3,7 +3,7 @@ import { Table } from 'antd';
 import axios from 'axios';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
-import CONFIG from "../../../config/config"
+import CONFIG from "@/config/config"
 import Link from 'next/link';
 
 
@@ -33,6 +33,11 @@ const Page = () => {
             dataIndex: 'insurance_cert',
             key: 'insurance_cert',
         },
+        {
+            title: 'Transfer History',
+            dataIndex: 'transfer_history',
+            key: 'transfer_history',
+        },
     ];
 
     useEffect(() => {
@@ -54,6 +59,9 @@ const Page = () => {
                     >
                         View
                     </a>
+                    obj.transfer_history = <Link href={`/vehicle-transfer-history/${obj.vehicle_number}`} >
+                        View
+                    </Link>
                     return obj
                 }))
             } catch (error) { console.log(error) }
